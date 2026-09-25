@@ -771,23 +771,23 @@ module.exports = {
             ]
         },
         eligible_wait_time: {
-            name: "Eligible Wait Time",
-            unit: "seconds",
-            type: "int32",
-            dtype: "accounting",
-            group: "Timing",
+            name: 'Eligible Wait Time',
+            unit: 'seconds',
+            type: 'int32',
+            dtype: 'accounting',
+            group: 'Timing',
             nullable: true,
             def: null,
             batchExport: true,
             comments: "The amount of time between the job becoming eligible to run and job start. NULL if the job's eligible time is not known.",
-            per: "job",
-            table: "job",
+            per: 'job',
+            table: 'job',
             agg: [{
                 name: 'eligible_wait_time',
                 table: 'supremmfact',
                 type: 'double',
                 dimension: false,
-                sql: 'coalesce(sum(' + getIf('start_time_ts between :period_start_ts and :period_end_ts', 'eligible_wait_time', 0) + '),0)',
+                sql: `coalesce(sum(${getIf('start_time_ts between :period_start_ts and :period_end_ts', 'eligible_wait_time', 0)}),0)`,
                 comments: 'The amount of time jobs waited to execute during this period, measured from the time each job became eligible to run. Excludes jobs with no known eligible time.',
                 stats: [{
                     sql: 'coalesce(sum(jf.eligible_wait_time/3600.0),0)',
@@ -810,7 +810,7 @@ module.exports = {
                 table: 'supremmfact',
                 type: 'int32',
                 dimension: false,
-                sql: 'sum(' + getIf('start_time_ts between :period_start_ts and :period_end_ts and eligible_wait_time is not null', 1, 0) + ')',
+                sql: `sum(${getIf('start_time_ts between :period_start_ts and :period_end_ts and eligible_wait_time is not null', 1, 0)})`,
                 comments: 'The number of jobs that started during this period and had a known eligible time.'
             }]
         },
