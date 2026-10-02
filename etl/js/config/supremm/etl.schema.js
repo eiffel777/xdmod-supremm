@@ -129,7 +129,7 @@ module.exports = {
                 sum_weighted_expansion_factor: {
                     type: 'double',
                     dimension: false,
-                    sql: 'sum( ((wall_time + wait_time) / wall_time) * nodecount_id * ' + wallduration_case_statement + ')',
+                    sql: 'sum( ((wall_time + wait_time) / NULLIF(wall_time, 0)) * nodecount_id * ' + wallduration_case_statement + ')',
                     comments: 'The sum of expansion factor per job multiplied by nodecount and the [adjusted] duration of jobs that ran in this period.'
                 }
             }
@@ -194,6 +194,7 @@ module.exports = {
             type: "string",
             dtype: "accounting",
             group: "Executable",
+            length: 256,
             nullable: false,
             def: "NA",
             comments: "The name of the job as reported by the job scheduler.",
@@ -690,7 +691,7 @@ module.exports = {
                 dimension: true,
                 category: 'Metrics',
                 table: 'supremmfact',
-                sql: '(SELECT id FROM modw_supremm.percentages_buckets cb WHERE coalesce(jf.wall_time/jf.requested_wall_time * 100, -1.0) > cb.min AND coalesce(jf.wall_time/jf.requested_wall_time * 100, -1.0) <= cb.max)',
+                sql: '(SELECT id FROM modw_supremm.percentages_buckets cb WHERE coalesce(jf.wall_time/NULLIF(jf.requested_wall_time, 0) * 100, -1.0) > cb.min AND coalesce(jf.wall_time/NULLIF(jf.requested_wall_time, 0) * 100, -1.0) <= cb.max)',
                 label: 'Wall Time Accuracy Value',
                 dimension_table: 'percentages_buckets',
                 show_all_dimension_values: true
@@ -1554,7 +1555,7 @@ module.exports = {
                     roles: { disable: [ "pub" ] },
                     dimension: true,
                     table: 'supremmfact',
-                    sql: '(SELECT id FROM modw_supremm.logscalebytes_buckets cb WHERE coalesce(ib_rx_bytes/wall_time, -1.0) > cb.min AND coalesce(ib_rx_bytes/wall_time, -1.0) <= cb.max)',
+                    sql: '(SELECT id FROM modw_supremm.logscalebytes_buckets cb WHERE coalesce(ib_rx_bytes/NULLIF(wall_time, 0), -1.0) > cb.min AND coalesce(ib_rx_bytes/NULLIF(wall_time, 0), -1.0) <= cb.max)',
                     label: "InfiniBand Receive rate",
                     category: "Metrics",
                     dimension_table: "logscalebytes_buckets"
