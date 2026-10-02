@@ -62,7 +62,7 @@ module.exports = function(config) {
         // The summarization software reports some missing metrics with a text
         // error such as "no data". The error columns are integer bit fields,
         // so map anything that is not an integer to a generic error code.
-        numericError: function (error) {
+        numericError(error) {
             if (Number.isInteger(error)) {
                 return error;
             }
@@ -814,8 +814,8 @@ module.exports = function(config) {
                 }
             },
             "gpu0_nv_mem_used": {
-                formula: function (job) {
-                    var mem = this.ref(job, 'gpu.gpu0.memused.avg');
+                formula(job) {
+                    const mem = this.ref(job, 'gpu.gpu0.memused.avg');
                     if (mem.error === 0) {
                         return mem;
                     }
